@@ -1,4 +1,10 @@
-# KALO BINGUNG DI BAGIAN TERTENTU, CEK DOCUMENTATION (coming soon)
+# Weapon Detection & Classification
+
+Based on GardaSec idea, we build this for our Smart Security Cam Devices (SSCD).
+
+
+
+*KALO BINGUNG DI BAGIAN TERTENTU, CEK DOCUMENTATION (coming soon)
 
 ## Instruksi Tugas
 
