@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 def main():
-    model = YOLO("yolov8n.pt")
+    model = YOLO("models/yolov8n.pt")
 
     model.train(
         data="datasets/gun_detection/data.yaml",
