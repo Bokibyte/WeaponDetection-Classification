@@ -3,9 +3,9 @@ import os
 from ultralytics import YOLO
 
 def main():
-    model = YOLO("runs/detect/train/weights/best.pt")  # path model kamu
+    model = YOLO("runs/detect/train/weights/best.pt")  # model path (detection)
 
-    source_folder = "datasets/gun_detection/images/val"  # folder yang mau kamu crop
+    source_folder = "datasets/gun_detection/images/val"  # source
     save_folder = "crops/weapon"
     os.makedirs(save_folder, exist_ok=True)
 
