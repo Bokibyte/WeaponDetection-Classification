@@ -19,12 +19,10 @@ def main():
         copy_paste=0,
         mixup=0,
         cache=True,
-
-        save_dir= f"runs/{trainName}/train"
     )
     
     Organizer(trainName)
-    autoCropper(trainName, "gun_classification/structured", trainName)
+    autoCropper(trainName)
 
 if __name__ == "__main__":
     main()

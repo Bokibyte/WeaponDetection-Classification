@@ -3,11 +3,11 @@ import cv2
 from ultralytics import YOLO
 
 class autoCropper:
-    def __init__(self, modelFolderName: str, sourceName: str, saveFolder: str):
-        self.model_path = f"runs/{modelFolderName}/train/weights/best.pt"
+    def __init__(self, modelPath):
+        self.model_path = f"runs/{modelPath}/train/weights/best.pt"
         self.model = YOLO(self.model_path)
-        self.source_folder = f"datasets/{sourceName}/images/val"
-        self.save_folder = f"crops/{saveFolder}"
+        self.source_folder = f"datasets/{modelPath}/val/images"
+        self.save_folder = f"crops/{modelPath}"
         os.makedirs(self.save_folder, exist_ok=True)
         self.run()
 
