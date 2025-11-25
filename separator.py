@@ -27,7 +27,7 @@ def copyFile(cls, type):
                 newImgName = f"{cls}_{idx}.jpg"
                 newTxtName = f"{cls}_{idx}.txt"
                 shutil.copy(images, f"{mainPath}/{cls}/images/{type}/{newImgName}")
-                shutil.copy(images, f"{mainPath}/{cls}/labels/{type}/{newTxtName}")
+                shutil.copy(labels, f"{mainPath}/{cls}/labels/{type}/{newTxtName}")
                 print(f"[DONE] train img copied : {mainPath}/{cls}/images/{type}/{newImgName}")
                 print(f"[DONE] train txt copied : {mainPath}/{cls}/labels/{type}/{newTxtName}")
                 break

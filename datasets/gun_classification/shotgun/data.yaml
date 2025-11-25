@@ -1,5 +1,0 @@
-path: datasets/gun_classification/shotgun
-train: images/train
-val: images/val
-names:
-  0: shotgun
