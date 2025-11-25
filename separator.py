@@ -5,7 +5,7 @@ import yaml
 
 mainPath = "datasets/gun_classification"
 rawPath = "datasets/gun_classification/_unstructured"
-weapClass = ["automatic_rifle", "rocket_launcher", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]  
+weapClass = ["automatic_rifle", "bazooka", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]  
 
 def createClassFolder(cls):
     os.makedirs(f"{mainPath}/{cls}", exist_ok=True)
