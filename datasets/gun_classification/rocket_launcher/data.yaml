@@ -1,0 +1,5 @@
+path: datasets/gun_classification/rocket_launcher
+train: images/train
+val: images/val
+names:
+  0: rocket_launcher

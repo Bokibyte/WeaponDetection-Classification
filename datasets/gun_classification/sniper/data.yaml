@@ -1,0 +1,5 @@
+path: datasets/gun_classification/sniper
+train: images/train
+val: images/val
+names:
+  0: sniper
