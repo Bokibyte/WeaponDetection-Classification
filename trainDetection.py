@@ -1,6 +1,8 @@
 from ultralytics import YOLO
 
 def main():
+    
+    trainName = "Detection"
     model = YOLO("models/yolov8n.pt")
 
     model.train(
@@ -15,6 +17,9 @@ def main():
         copy_paste=0,
         mixup=0,
         cache=True,
+        
+        save_dir= f"runs/{trainName}/train"
+        
     )
 
 

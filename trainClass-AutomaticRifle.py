@@ -1,10 +1,12 @@
 from ultralytics import YOLO
 
 def main():
-    model = YOLO("yolov8n.pt")
+    
+    trainName = "Classification/AutomaticRifle"
+    model = YOLO("models/yolov8n.pt")
 
     model.train(
-        data="datasets\gun_classification\structured\data.yaml",
+        data="datasets/gun_classification/structured/data.yaml",
         epochs=20,
         imgsz=448,
         batch=8,
@@ -16,8 +18,7 @@ def main():
         mixup=0,
         cache=True,
 
-        project="runs\classifications",
-        name="Automatic_Rifle"   # tempat folder output
+        save_dir= f"runs/{trainName}/train"
     )
 
 if __name__ == "__main__":

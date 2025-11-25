@@ -4,6 +4,7 @@ datasets/gun_classification/test/
 datasets/gun_classification/structured/
 datasets/gun_detection/images/
 datasets/gun_detection/labels/
+**/__pycache__/
 crops/
 *.jpg
 *.txt
