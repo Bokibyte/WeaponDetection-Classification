@@ -1,4 +1,6 @@
 from ultralytics import YOLO
+from utils.organizer import Organizer
+from utils.autocropper import autoCropper
 
 def main():
     
@@ -20,6 +22,15 @@ def main():
 
         save_dir= f"runs/{trainName}/train"
     )
+    
+    Organizer(trainName)
+    autoCropper(trainName, "gun_classification/structured", trainName)
 
 if __name__ == "__main__":
     main()
+    
+    
+    
+    
+    
+    

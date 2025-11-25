@@ -7,7 +7,7 @@ class autoCropper:
         self.model_path = f"runs/{modelFolderName}/train/weights/best.pt"
         self.model = YOLO(self.model_path)
         self.source_folder = f"datasets/{sourceName}/images/val"
-        self.save_folder = saveFolder
+        self.save_folder = f"crops/{saveFolder}"
         os.makedirs(self.save_folder, exist_ok=True)
         self.run()
 
