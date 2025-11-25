@@ -1,51 +1,50 @@
 import os
 import shutil
 import glob
-from concurrent.futures import ThreadPoolExecutor
+import yaml
 
 mainPath = "datasets/gun_classification"
 rawPath = "datasets/gun_classification/_unstructured"
-
 weapClass = ["automatic_rifle", "rocket_launcher", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]  
 
-for classes in weapClass:
-    
-    os.makedirs(f"{mainPath}/{classes}", exist_ok=True)
-    os.makedirs(f"{mainPath}/{classes}/images/train", exist_ok=True)
-    os.makedirs(f"{mainPath}/{classes}/images/val", exist_ok=True)
-    os.makedirs(f"{mainPath}/{classes}/labels/train", exist_ok=True)
-    os.makedirs(f"{mainPath}/{classes}/labels/val", exist_ok=True)
+def createClassFolder(cls):
+    os.makedirs(f"{mainPath}/{cls}", exist_ok=True)
+    os.makedirs(f"{mainPath}/{cls}/images/train", exist_ok=True)
+    os.makedirs(f"{mainPath}/{cls}/images/val", exist_ok=True)
+    os.makedirs(f"{mainPath}/{cls}/labels/train", exist_ok=True)
+    os.makedirs(f"{mainPath}/{cls}/labels/val", exist_ok=True)
 
-    prefix = f"{classes[:3]}*"
-    getImgTrn = glob.glob(os.path.join(rawPath,"train", "images", prefix))
-    getTxtTrn = glob.glob(os.path.join(rawPath,"train", "labels", prefix))
-    getImgVal = glob.glob(os.path.join(rawPath,"val", "images", prefix))
-    getTxtVal = glob.glob(os.path.join(rawPath,"val", "labels", prefix))
+def copyFile(cls, type):
+    prefix = f"{cls[:3]}*"
+    getImg = glob.glob(os.path.join(rawPath, type, "images", prefix))
+    getTxt = glob.glob(os.path.join(rawPath, type, "labels", prefix))
 
-    for idx, images in enumerate(getImgTrn):
+    for idx, images in enumerate(getImg):
         getImgName = os.path.splitext(os.path.basename(images))[0]
-        for labels in  getTxtTrn:
+        for labels in  getTxt:
             getTxtName = os.path.splitext(os.path.basename(labels))[0]
             if getImgName == getTxtName:
-                newImgName = f"{classes}_{idx}.jpg"
-                newTxtName = f"{classes}_{idx}.txt"
-                shutil.copy(images, f"{mainPath}/{classes}/images/train/{newImgName}")
-                shutil.copy(images, f"{mainPath}/{classes}/labels/train/{newImgName}")
-                print(f"[DONE] train img copied : {mainPath}/{classes}/images/train/{newImgName}")
-                print(f"[DONE] train txt copied : {mainPath}/{classes}/labels/train/{newImgName}")
+                newImgName = f"{cls}_{idx}.jpg"
+                newTxtName = f"{cls}_{idx}.txt"
+                shutil.copy(images, f"{mainPath}/{cls}/images/{type}/{newImgName}")
+                shutil.copy(images, f"{mainPath}/{cls}/labels/{type}/{newImgName}")
+                print(f"[DONE] train img copied : {mainPath}/{cls}/images/{type}/{newImgName}")
+                print(f"[DONE] train txt copied : {mainPath}/{cls}/labels/{type}/{newTxtName}")
                 break
+            
+def yamlGen(cls):
+    yamlTemplate = {
+        "path": f"{mainPath}/{cls}",
+        "train": "images/train",
+        "val": "images/val",
+        "names": {0: cls}
+    }
+    with open(f"{mainPath}/{cls}/data.yaml", "w") as f:
+        yaml.dump(yamlTemplate, f, sort_keys=False)
         
-    for idx, images in enumerate(getImgVal):
-            getImgName = os.path.splitext(os.path.basename(images))[0]
-            for labels in  getTxtVal:
-                getTxtName = os.path.splitext(os.path.basename(labels))[0]
-                if getImgName == getTxtName:
-                    newImgName = f"{classes}_{idx}.jpg"
-                    newTxtName = f"{classes}_{idx}.txt"
-                    shutil.copy(images, f"{mainPath}/{classes}/images/val/{newImgName}")
-                    shutil.copy(images, f"{mainPath}/{classes}/labels/val/{newImgName}")
-                    print(f"[DONE] val img copied : {mainPath}/{classes}/images/val/{newImgName}")
-                    print(f"[DONE] val txt copied : {mainPath}/{classes}/labels/val/{newImgName}")
-                    break
-                
- 
+        
+for classes in weapClass:
+    createClassFolder(classes)
+    copyFile(classes, "train")
+    copyFile(classes, "val")
+    yamlGen(classes)
