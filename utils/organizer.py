@@ -5,7 +5,9 @@ import shutil
 class Organizer:
     def __init__(self, contextName: str):
 
-        self.folderPath = f"runs/{contextName}/train"
+
+        self.folderPath = "runs/detect/train"
+        self.moveFolderPath = f"runs/{contextName}/train"
         self.orgFolder = ["curve", "train", "val", "result"]
         self.resultFolder = ["labels", "result", "confusion"]
         self.run()
@@ -20,14 +22,14 @@ class Organizer:
         for nameFolder in self.orgFolder:
 
             if nameFolder == "curve":
-                target = f"{self.folderPath}/{nameFolder}"
+                target = f"{self.moveFolderPath}/{nameFolder}"
                 os.makedirs(target, exist_ok=True)
 
                 pattern = f"{self.folderPath}/*curve*"
                 self.move_files(pattern, target)
 
             elif nameFolder == "result":
-                target = f"{self.folderPath}/{nameFolder}"
+                target = f"{self.moveFolderPath}/{nameFolder}"
                 os.makedirs(target, exist_ok=True)
 
                 for resultName in self.resultFolder:
@@ -35,10 +37,11 @@ class Organizer:
                     self.move_files(pattern, target)
 
             else:
-                target = f"{self.folderPath}/{nameFolder}"
+                target = f"{self.moveFolderPath}/{nameFolder}"
                 os.makedirs(target, exist_ok=True)
 
                 pattern = f"{self.folderPath}/{nameFolder}*"
                 self.move_files(pattern, target)
-
+            
+        shutil.rmtree("runs/detect")
         print("\n[DONE MOVE]")
