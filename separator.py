@@ -1,103 +1,67 @@
 import os
 import shutil
-import yaml
+import glob
+from concurrent.futures import ThreadPoolExecutor
 
-def ensure(path):
-    os.makedirs(path, exist_ok=True)
+mainPath = "datasets/gun_classification"
 
-def get_classname(filename):
-    # Ambil nama sebelum underscore pertama
-    # Contoh: "Automatic Rifle_10.jpeg" → "Automatic Rifle"
-    name = filename.rsplit(".", 1)[0]
-    parts = name.split("_")
-    return parts[0] if len(parts) > 1 else name
+weapClass = ["automaticRifle", "rocketLauncher", "grenadeLauncher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
 
-def process_split(split_type):
-    """
-    split_type = 'train' atau 'val'
-    """
-    src_images = f"datasets/gun_classification/{split_type}/images"
-    src_labels = f"datasets/gun_classification/{split_type}/labels"
+for classes in weapClass:
+    os.makedirs(f"{mainPath}/{classes}", exist_ok=True)
 
-    dst_images = f"datasets/gun_classification/structured/{split_type}/images"
-    dst_labels = f"datasets/gun_classification/structured/{split_type}/labels"
+def toTrain(weapClass):
+    imgPath = "train/images"
+    txtPath = "train/labels"
 
-    ensure(dst_images)
-    ensure(dst_labels)
+    prefix = f"{weapClass[:3]}*"
+    filesImg = glob.glob(os.path.join(mainPath, imgPath, prefix))
+    filesTxt = glob.glob(os.path.join(mainPath, txtPath, prefix))
 
-    # buat counter per-class
-    counters = {}
+    os.makedirs(os.path.join(mainPath, weapClass, imgPath), exist_ok=True)
+    os.makedirs(os.path.join(mainPath, weapClass, txtPath), exist_ok=True)
 
-    files = [f for f in os.listdir(src_images) if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+    for idx, f in enumerate(filesImg):
+        ext = os.path.splitext(f)[1]  
+        newname = f"{weapClass}_{idx}{ext}"
+        shutil.copy(f, os.path.join(mainPath, weapClass, imgPath, newname))
+        print(f"[DONE] train: Copied IMG: {newname}")
 
-    for img_file in files:
-        classname = get_classname(img_file)
+    for idx, f in enumerate(filesTxt):
+        newname = f"{weapClass}_{idx}.txt"
+        shutil.copy(f, os.path.join(mainPath, weapClass, txtPath, newname))
+        print(f"[DONE] train: Copied TXT: {newname}")
+    
+def toVal(weapClass):
+    imgPath = "val/images"
+    txtPath = "val/labels"
 
-        # Increment counter untuk class ini
-        if classname not in counters:
-            counters[classname] = 1
-        else:
-            counters[classname] += 1
+    prefix = f"{weapClass[:3]}*"
+    filesImg = glob.glob(os.path.join(mainPath, imgPath, prefix))
+    filesTxt = glob.glob(os.path.join(mainPath, txtPath, prefix))
 
-        # Ekstensi file
-        ext = img_file.split(".")[-1]
+    os.makedirs(os.path.join(mainPath, weapClass, imgPath), exist_ok=True)
+    os.makedirs(os.path.join(mainPath, weapClass, txtPath), exist_ok=True)
 
-        # Nama file baru
-        new_name = f"{classname}_{counters[classname]}.{ext}"
+    for idx, f in enumerate(filesImg):
+        ext = os.path.splitext(f)[1]  
+        newname = f"{weapClass}_{idx}{ext}"
+        shutil.copy(f, os.path.join(mainPath, weapClass, imgPath, newname))
+        print(f"[DONE] val: Copied IMG: {newname}")
 
-        # Path sumber
-        img_src = os.path.join(src_images, img_file)
-        txt_src = os.path.join(src_labels, img_file.rsplit(".", 1)[0] + ".txt")
+    for idx, f in enumerate(filesTxt):
+        newname = f"{weapClass}_{idx}.txt"
+        shutil.copy(f, os.path.join(mainPath, weapClass, txtPath, newname))
+        print(f"[DONE] val: Copied TXT: {newname}")
 
-        # Path tujuan
-        img_dst_folder = os.path.join(dst_images, classname)
-        txt_dst_folder = os.path.join(dst_labels, classname)
+def runCopyTrain():
+    for classes in weapClass:
+        toTrain(classes)
+        
+def runCopyVal():
+    for classes in weapClass:
+        toVal(classes)
 
-        ensure(img_dst_folder)
-        ensure(txt_dst_folder)
-
-        # Copy + rename image
-        shutil.copy(img_src, os.path.join(img_dst_folder, new_name))
-
-        # Copy label dengan nama baru
-        if os.path.exists(txt_src):
-            new_label_name = new_name.rsplit(".", 1)[0] + ".txt"
-            shutil.copy(txt_src, os.path.join(txt_dst_folder, new_label_name))
-
-        print(f"Moved: {img_file} → {classname}/{new_name}")
-
-def create_yaml():
-    base_path = "datasets/gun_classification/structured"
-    train_images = os.path.join(base_path, "train", "images")
-
-    # ambil semua folder class di train/images/
-    classes = [d for d in os.listdir(train_images) if os.path.isdir(os.path.join(train_images, d))]
-
-    classes.sort()
-
-    names_dict = {i: cls for i, cls in enumerate(classes)}
-
-    yaml_dict = {
-        "path": base_path,
-        "train": "train/images",
-        "val": "val/images",
-        "names": names_dict
-    }
-
-    yaml_path = os.path.join(base_path, "data.yaml")
-
-    with open(yaml_path, "w") as f:
-        yaml.dump(yaml_dict, f, sort_keys=False)
-
-    print("\n✓ data.yaml dibuat otomatis!")
-    print(f"Lokasi: {yaml_path}")
-    print("Isi names:", names_dict)
-
-def main():
-    process_split("train")
-    process_split("val")
-    print("\n✓ Dataset berhasil direstrukturisasi!")
-    create_yaml()
-
-if __name__ == "__main__":
-    main()
+with ThreadPoolExecutor(max_workers=2) as exe:
+    exe.submit(runCopyTrain)
+    exe.submit(runCopyVal)

@@ -1,10 +1,7 @@
-datasets/gun_classification/train/
-datasets/gun_classification/val/
-datasets/gun_classification/test/
-datasets/gun_classification/structured/
-datasets/gun_detection/images/
-datasets/gun_detection/labels/
+datasets/**/*.jpg
+datasets/**/*.jpeg
+datasets/**/*.png
+datasets/**/*.gif
+datasets/**/*.txt
+crops/**/*.jpg
 **/__pycache__/
-crops/
-*.jpg
-*.txt
