@@ -19,7 +19,8 @@ def trainTs(cls, model):
         cache = True,
     )
 
-for classes in weapClass:
-    trainTs(classes, "yolov8n.pt")
-    Organizer(f"classification/{classes}")
-    print(f"[DONE] Trained {classes}")
+if __name__ == '__main__':
+    for cls in weapClass:
+        trainTs(cls, "yolov8n.pt")
+        Organizer(f"classification/{cls}")
+        print(f"[DONE] Trained {cls}")
