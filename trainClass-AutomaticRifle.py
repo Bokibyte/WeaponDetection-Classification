@@ -4,7 +4,7 @@ from utils.autocropper import autoCropper
 
 def main():
     
-    trainName = "Classification/AutomaticRifle"
+    trainName = "classification/automaticRifle"
     model = YOLO("models/yolov8n.pt")
 
     model.train(
