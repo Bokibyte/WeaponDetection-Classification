@@ -1,77 +1,65 @@
 import os
-import shutil
 import glob
-from concurrent.futures import ThreadPoolExecutor
+import shutil
 
 mainPath = "datasets/gun_classification"
+rawPath  = "datasets/gun_classification/_unstructured"
 
-weapClass = ["automatic_rifle", "rocket_launcher", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
+weapClass = [
+    "automatic_rifle", "rocket_launcher", "grenade_launcher", 
+    "handgun", "knife", "shotgun", "smg", "sniper", "sword"
+]
 
-for classes in weapClass:
-    os.makedirs(f"{mainPath}/{classes}", exist_ok=True)
+for cls in weapClass:
 
-def toImages(weapClass):
-    trainSrc = os.path.join(mainPath, "images", "train")
-    valSrc   = os.path.join(mainPath, "images", "val")
+    imgOutTrain = os.path.join(mainPath, cls, "images", "train")
+    imgOutVal   = os.path.join(mainPath, cls, "images", "val")
+    lblOutTrain = os.path.join(mainPath, cls, "labels", "train")
+    lblOutVal   = os.path.join(mainPath, cls, "labels", "val")
 
-    dstTrain = os.path.join(mainPath, weapClass, "images", "train")
-    dstVal   = os.path.join(mainPath, weapClass, "images",  "val")
+    os.makedirs(imgOutTrain, exist_ok=True)
+    os.makedirs(imgOutVal, exist_ok=True)
+    os.makedirs(lblOutTrain, exist_ok=True)
+    os.makedirs(lblOutVal, exist_ok=True)
 
-    os.makedirs(dstTrain, exist_ok=True)
-    os.makedirs(dstVal, exist_ok=True)
+    prefix = f"{cls[:3]}*"
 
-    prefix = f"{weapClass[:3]}*"
-
-    filesTrain = glob.glob(os.path.join(trainSrc, prefix))
-    filesVal   = glob.glob(os.path.join(valSrc, prefix))
-
-    for idx, f in enumerate(filesTrain):
-        ext = os.path.splitext(f)[1]
-        newname = f"{weapClass}_train_{idx}{ext}"
-        shutil.copy(f, os.path.join(dstTrain, newname))
-        print(f"[DONE] train: Copied IMG → {newname}")
-
-    for idx, f in enumerate(filesVal):
-        ext = os.path.splitext(f)[1]
-        newname = f"{weapClass}_val_{idx}{ext}"
-        shutil.copy(f, os.path.join(dstVal, newname))
-        print(f"[DONE] val: Copied IMG → {newname}")
-
-
+    imgTrain = glob.glob(os.path.join(rawPath, "images", "train", prefix))
+    imgVal   = glob.glob(os.path.join(rawPath, "images", "val", prefix))
     
-def toLabels(weapClass):
-    trainSrc = os.path.join(mainPath, "labels", "train")
-    valSrc   = os.path.join(mainPath, "labels", "val")
+    lblTrain = glob.glob(os.path.join(rawPath, "labels", "train", prefix.replace("*","") + "*.txt"))
+    lblVal   = glob.glob(os.path.join(rawPath, "labels", "val", prefix.replace("*","") + "*.txt"))
 
-    dstTrain = os.path.join(mainPath, weapClass, "labels", "train")
-    dstVal   = os.path.join(mainPath, weapClass, "labels",  "val")
+    for idx, img in enumerate(imgTrain):
+        name_noext = os.path.splitext(os.path.basename(img))[0]
+        ext = os.path.splitext(img)[1]
 
-    os.makedirs(dstTrain, exist_ok=True)
-    os.makedirs(dstVal, exist_ok=True)
+        newImg = f"{cls}_{idx}{ext}"
+        newLbl = f"{cls}_{idx}.txt"
 
-    prefix = f"{weapClass[:3]}*"
+        lbl = os.path.join(rawPath, "labels", "train", name_noext + ".txt")
+        if not os.path.exists(lbl):
+            print(f"[WARNING] label not found for: {img}")
+            continue
 
-    filesTrain = glob.glob(os.path.join(trainSrc, prefix))
-    filesVal   = glob.glob(os.path.join(valSrc, prefix))
+        shutil.copy(img, os.path.join(imgOutTrain, newImg))
+        shutil.copy(lbl, os.path.join(lblOutTrain, newLbl))
 
-    for idx, f in enumerate(filesTrain):
-        newname = f"{weapClass}_train_{idx}.txt"
-        shutil.copy(f, os.path.join(dstTrain, newname))
-        print(f"[DONE] train: Copied TXT → {newname}")
+        print(f"[DONE] train copied: {newImg}")
 
-    for idx, f in enumerate(filesVal):
-        newname = f"{weapClass}_val_{idx}.txt"
-        shutil.copy(f, os.path.join(dstVal, newname))
-        print(f"[DONE] val: Copied TXT → {newname}")
+    for idx, img in enumerate(imgVal):
+        name_noext = os.path.splitext(os.path.basename(img))[0]
+        ext = os.path.splitext(img)[1]
 
-def runCopyTrain():
-    for classes in weapClass:
-        toImages(classes)
-        
-def runCopyVal():
-    for classes in weapClass:
-        toLabels(classes)
+        newImg = f"{cls}_{idx}{ext}"
+        newLbl = f"{cls}_{idx}.txt"
 
-with ThreadPoolExecutor(max_workers=2) as exe:
-    exe.submit(runCopyTrain)
-    exe.submit(runCopyVal)
+        lbl = os.path.join(rawPath, "labels", "val", name_noext + ".txt")
+        if not os.path.exists(lbl):
+            print(f"[WARNING] label not found for: {img}")
+            continue
+
+        shutil.copy(img, os.path.join(imgOutVal, newImg))
+        shutil.copy(lbl, os.path.join(lblOutVal, newLbl))
+
+        print(f"[VAL] val copied: {newImg}")
