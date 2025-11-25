@@ -1,65 +1,51 @@
 import os
-import glob
 import shutil
+import glob
+from concurrent.futures import ThreadPoolExecutor
 
 mainPath = "datasets/gun_classification"
-rawPath  = "datasets/gun_classification/_unstructured"
+rawPath = "datasets/gun_classification/_unstructured"
 
-weapClass = [
-    "automatic_rifle", "rocket_launcher", "grenade_launcher", 
-    "handgun", "knife", "shotgun", "smg", "sniper", "sword"
-]
+weapClass = ["automatic_rifle", "rocket_launcher", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]  
 
-for cls in weapClass:
-
-    imgOutTrain = os.path.join(mainPath, cls, "images", "train")
-    imgOutVal   = os.path.join(mainPath, cls, "images", "val")
-    lblOutTrain = os.path.join(mainPath, cls, "labels", "train")
-    lblOutVal   = os.path.join(mainPath, cls, "labels", "val")
-
-    os.makedirs(imgOutTrain, exist_ok=True)
-    os.makedirs(imgOutVal, exist_ok=True)
-    os.makedirs(lblOutTrain, exist_ok=True)
-    os.makedirs(lblOutVal, exist_ok=True)
-
-    prefix = f"{cls[:3]}*"
-
-    imgTrain = glob.glob(os.path.join(rawPath, "images", "train", prefix))
-    imgVal   = glob.glob(os.path.join(rawPath, "images", "val", prefix))
+for classes in weapClass:
     
-    lblTrain = glob.glob(os.path.join(rawPath, "labels", "train", prefix.replace("*","") + "*.txt"))
-    lblVal   = glob.glob(os.path.join(rawPath, "labels", "val", prefix.replace("*","") + "*.txt"))
+    os.makedirs(f"{mainPath}/{classes}", exist_ok=True)
+    os.makedirs(f"{mainPath}/{classes}/images/train", exist_ok=True)
+    os.makedirs(f"{mainPath}/{classes}/images/val", exist_ok=True)
+    os.makedirs(f"{mainPath}/{classes}/labels/train", exist_ok=True)
+    os.makedirs(f"{mainPath}/{classes}/labels/val", exist_ok=True)
 
-    for idx, img in enumerate(imgTrain):
-        name_noext = os.path.splitext(os.path.basename(img))[0]
-        ext = os.path.splitext(img)[1]
+    prefix = f"{classes[:3]}*"
+    getImgTrn = glob.glob(os.path.join(rawPath,"train", "images", prefix))
+    getTxtTrn = glob.glob(os.path.join(rawPath,"train", "labels", prefix))
+    getImgVal = glob.glob(os.path.join(rawPath,"val", "images", prefix))
+    getTxtVal = glob.glob(os.path.join(rawPath,"val", "labels", prefix))
 
-        newImg = f"{cls}_{idx}{ext}"
-        newLbl = f"{cls}_{idx}.txt"
-
-        lbl = os.path.join(rawPath, "labels", "train", name_noext + ".txt")
-        if not os.path.exists(lbl):
-            print(f"[WARNING] label not found for: {img}")
-            continue
-
-        shutil.copy(img, os.path.join(imgOutTrain, newImg))
-        shutil.copy(lbl, os.path.join(lblOutTrain, newLbl))
-
-        print(f"[DONE] train copied: {newImg}")
-
-    for idx, img in enumerate(imgVal):
-        name_noext = os.path.splitext(os.path.basename(img))[0]
-        ext = os.path.splitext(img)[1]
-
-        newImg = f"{cls}_{idx}{ext}"
-        newLbl = f"{cls}_{idx}.txt"
-
-        lbl = os.path.join(rawPath, "labels", "val", name_noext + ".txt")
-        if not os.path.exists(lbl):
-            print(f"[WARNING] label not found for: {img}")
-            continue
-
-        shutil.copy(img, os.path.join(imgOutVal, newImg))
-        shutil.copy(lbl, os.path.join(lblOutVal, newLbl))
-
-        print(f"[VAL] val copied: {newImg}")
+    for idx, images in enumerate(getImgTrn):
+        getImgName = os.path.splitext(os.path.basename(images))[0]
+        for labels in  getTxtTrn:
+            getTxtName = os.path.splitext(os.path.basename(labels))[0]
+            if getImgName == getTxtName:
+                newImgName = f"{classes}_{idx}.jpg"
+                newTxtName = f"{classes}_{idx}.txt"
+                shutil.copy(images, f"{mainPath}/{classes}/images/train/{newImgName}")
+                shutil.copy(images, f"{mainPath}/{classes}/labels/train/{newImgName}")
+                print(f"[DONE] train img copied : {mainPath}/{classes}/images/train/{newImgName}")
+                print(f"[DONE] train txt copied : {mainPath}/{classes}/labels/train/{newImgName}")
+                break
+        
+    for idx, images in enumerate(getImgVal):
+            getImgName = os.path.splitext(os.path.basename(images))[0]
+            for labels in  getTxtVal:
+                getTxtName = os.path.splitext(os.path.basename(labels))[0]
+                if getImgName == getTxtName:
+                    newImgName = f"{classes}_{idx}.jpg"
+                    newTxtName = f"{classes}_{idx}.txt"
+                    shutil.copy(images, f"{mainPath}/{classes}/images/val/{newImgName}")
+                    shutil.copy(images, f"{mainPath}/{classes}/labels/val/{newImgName}")
+                    print(f"[DONE] val img copied : {mainPath}/{classes}/images/val/{newImgName}")
+                    print(f"[DONE] val txt copied : {mainPath}/{classes}/labels/val/{newImgName}")
+                    break
+                
+ 
