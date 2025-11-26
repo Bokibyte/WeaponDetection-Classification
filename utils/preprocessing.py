@@ -82,7 +82,7 @@ class preprocess():
             for line in lines:
                 parts = line.strip().split()
                 if len(parts) >= 5:
-                    parts[0] = "0"          # class id selalu 0
+                    parts[0] = "0"         
                     new_lines.append(" ".join(parts) + "\n")
 
             with open(txt, "w") as f:

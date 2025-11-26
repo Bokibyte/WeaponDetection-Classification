@@ -23,20 +23,20 @@ class checkImage:
             return self.coef
 
         self.coef = float(boxes.conf.max().cpu().numpy())
-        shutil.copy(self.image, "test/weapon/raw")
+        shutil.copy(self.image, "test/weapon/_raw")
         print(f"[DONE] img {self.imgName} is a weapon.")
         print(f"[DONE] img {self.imgName} had coef: {self.coef}")
         
         imgCv = cv2.imread(self.image)
-        crop_save_folder = f"test/weapon/crops/{self.imgName}"
-        os.makedirs(crop_save_folder, exist_ok=True)
+        cropSave = f"test/weapon/_crops/{self.imgName}"
+        os.makedirs(cropSave, exist_ok=True)
         
         counter = 0
         for box in boxes:
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             crop = imgCv[y1:y2, x1:x2]
 
-            savePath = os.path.join(crop_save_folder, f"{self.imgName}_crop_{counter}.jpg")
+            savePath = os.path.join(cropSave, f"{self.imgName}_crop_{counter}.jpg")
             cv2.imwrite(savePath, crop)
 
             print(f"[CROP] Saved: {savePath}")
@@ -50,7 +50,7 @@ class checkImage:
         self.cls = classes
         self.coef = 0
 
-        self.checkImg = self.detectionModel(self.image, verbose=False)
+        self.checkImg = self.model(self.image, verbose=False)
         boxes = self.checkImg[0].boxes
         
         if boxes is None or len(boxes) == 0:

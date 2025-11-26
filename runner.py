@@ -5,6 +5,7 @@ from utils.imageUtilities import checkImage
 import os
 import glob
 import random
+import shutil
 
 
 weapClass = ["automatic_rifle", "bazooka", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
@@ -29,7 +30,7 @@ def isWeapon():
         
 def imageClazzy5():
     chkimg = checkImage()
-    imgFiles = random.sample(glob.glob("test/weapon/crops/*"),5)
+    imgFiles = random.sample(glob.glob("test/weapon/_crops/*"),5)
     
     for img in imgFiles:
         scores = chkimg.runParallel(img, weapClass)
@@ -37,7 +38,9 @@ def imageClazzy5():
         imgName = os.path.splitext(os.path.basename(img))[0]
         best_idx = scores.index(max(scores))
         print(f"[{imgName}] terbaik:", weapClass[best_idx], scores[best_idx])
-
         
+        os.makedirs(f"test/weapon/{weapClass[best_idx]}", exist_ok=True)
+        shutil.copy(f"test/weapon/_raw/{os.path.basename(img)}", f"test/weapon/{weapClass[best_idx]}")
+
 if __name__ == "__main__":
     imageClazzy5()
