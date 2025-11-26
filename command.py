@@ -25,7 +25,7 @@ def runPrep():
 
 def isWeapon():
     chkimg = checkImage()
-    imgFiles = glob.glob(f"{testDataset}*")
+    imgFiles = glob.glob(f"{testDataset}/*")
     [chkimg.isWeap(f) for f in imgFiles]
         
 def imageClazzy5():

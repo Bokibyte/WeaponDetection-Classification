@@ -28,7 +28,7 @@ class checkImage:
         print(f"[DONE] img {self.imgName} had coef: {self.coef}")
         
         imgCv = cv2.imread(self.image)
-        cropSave = f"test/weapon/_crops/{self.imgName}"
+        cropSave = f"test/weapon/_crops"
         os.makedirs(cropSave, exist_ok=True)
         
         counter = 0
