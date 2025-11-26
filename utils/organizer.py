@@ -3,45 +3,33 @@ import glob
 import shutil
 
 class Organizer:
-    def __init__(self, contextName: str):
-
-        self.folderPath = "runs/detect/train"
-        self.moveFolderPath = f"runs/{contextName}/train"
-        self.orgFolder = ["curve", "train", "val", "result"]
-        self.resultFolder = ["labels", "result", "confusion"]
-        self.run()
-
-    def move_files(self, pattern, target):
-        files = glob.glob(pattern)
-        for file in files:
-            shutil.move(file, target)
-            print(f"Moved: {file} -> {target}")
-
-    def run(self):
-        for nameFolder in self.orgFolder:
-
-            if nameFolder == "curve":
-                target = f"{self.moveFolderPath}/{nameFolder}"
-                os.makedirs(target, exist_ok=True)
-
-                pattern = f"{self.folderPath}/*curve*"
-                self.move_files(pattern, target)
-
-            elif nameFolder == "result":
-                target = f"{self.moveFolderPath}/{nameFolder}"
-                os.makedirs(target, exist_ok=True)
-
-                for resultName in self.resultFolder:
-                    pattern = f"{self.folderPath}/{resultName}*"
-                    self.move_files(pattern, target)
-
-            else:
-                target = f"{self.moveFolderPath}/{nameFolder}"
-                os.makedirs(target, exist_ok=True)
-
-                pattern = f"{self.folderPath}/{nameFolder}*"
-                self.move_files(pattern, target)
+    def __init__(self, name):
+        self.makeFolder = ["curve", "train", "val", "result"]
+        self.loadPath = "runs/detect/train"
+        self.movePath = f"runs/{name}/train"
         
-        shutil.move("runs/detect", self.moveFolderPath)
+    def organize(self):
+        for folder in self.makeFolder:
+            if folder == "curve":
+                self.getFile = glob.glob(f"{self.loadPath}/*curve*")
+                
+                os.makedirs(f"{self.loadPath}/{folder}", exist_ok=True)
+                [shutil.move(file, f"{self.loadPath}/{folder}") for file in self.getFile]
+            elif folder == "result":
+                self.getFile = glob.glob(f"{self.loadPath}/result*") + [f"{self.loadPath}/labels.jpg"]
+                self.getFile.extend(glob.glob(f"{self.loadPath}/*matrix*")) 
+                
+                os.makedirs(f"{self.loadPath}/{folder}", exist_ok=True)
+                [shutil.move(file, f"{self.loadPath}/{folder}") for file in self.getFile]
+            else:
+                self.getFile = glob.glob(f"{self.loadPath}/{folder}*")
+                
+                os.makedirs(f"{self.loadPath}/{folder}", exist_ok=True)
+                [shutil.move(file, f"{self.loadPath}/{folder}") for file in self.getFile]
+                
+        shutil.move(f"{self.loadPath}", self.movePath)
         shutil.rmtree("runs/detect")
-        print("\n[DONE MOVE]")
+        
+        
+                
+                

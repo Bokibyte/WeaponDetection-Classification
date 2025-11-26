@@ -23,7 +23,6 @@ class preprocess():
             self.prefix = f"{self.classes[:3]}*"
     
     def createFolder(self):
-        os.makedirs(f"{self.outputPath}", exist_ok=True)
         [os.makedirs(f"{self.outputPath}/images/{f}", exist_ok=True) for f in self.folder]
         [os.makedirs(f"{self.outputPath}/labels/{f}", exist_ok=True) for f in self.folder]
         
