@@ -13,7 +13,8 @@ def runTrain():
 if __name__ == "__main__":
 
     for classes in weapClass:
-        p = prep(f"gun_classification/_unstructured", f"gun_classification/{classes}", classes)
-        p.createFolder()
-        p.copyFile()
+        p = prep(f"gun_classification/_unstructured", f"gun_classification", classes)
+
+        p.yamlGen()
+        p.fixLabels()
     

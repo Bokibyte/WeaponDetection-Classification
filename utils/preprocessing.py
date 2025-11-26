@@ -51,29 +51,29 @@ class preprocess():
                 print(f"[OK] Copied: {name}")
         
     
-    def yamlGen(self, cls):
+    def yamlGen(self):
 
         if self.prefix == "*":
-            self.yamlPath = f"{self.inputPath}"
+            self.yamlPath = f"{self.outputPath}"
             self.yamlName = self.name
-            self.yamlExport = f"{self.inputPath}/data.yaml"
+            self.yamlExport = f"{self.outputPath}/data.yaml"
         else:
-            self.yamlPath = f"{self.inputPath}/{self.classes}"
+            self.yamlPath = f"{self.outputPath}/{self.classes}"
             self.yamlName = self.classes
-            self.yamlExport = f"{self.inputPath}/{self.classes}/data.yaml"
+            self.yamlExport = f"{self.outputPath}/{self.classes}/data.yaml"
     
         yamlTemplate = {
             "path": self.yamlPath,
             "train": "images/train",
             "val": "images/val",
-            "names": {0: self.name}
+            "names": {0: self.yamlName}
         }
         
         with open(self.yamlExport, "w") as f:
             yaml.dump(yamlTemplate, f, sort_keys=False)
             
     def fixLabels(self):
-        txt_files = glob.glob(f"{self.outputPath}/**/*.txt", recursive=True)
+        txt_files = glob.glob(f"{self.outputPath}/{self.classes}/**/*.txt", recursive=True)
 
         for txt in txt_files:
             with open(txt, "r") as f:
