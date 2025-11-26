@@ -45,7 +45,7 @@ class checkImage:
         return self.coef
 
     def getCoef(self, img, classes):
-        self.model = YOLO(f"runs/classification/{classes}/weights//best.pt")
+        self.model = YOLO(f"runs/classification/{classes}/train/weights//best.pt")
         self.image = img
         self.cls = classes
         self.coef = 0
