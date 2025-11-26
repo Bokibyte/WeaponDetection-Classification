@@ -1,11 +1,12 @@
 from concurrent.futures import ThreadPoolExecutor
+from ultralytics import YOLO
 import os
 import shutil
 import cv2
 
 class checkImage:
     def __init__(self):
-        self.detectionModel = "runs/detection/train/weights/best.pt"
+        self.detectionModel = YOLO("runs/detection/train/weights/best.pt")
         
     def isWeap(self, img):
         self.image = img
@@ -44,7 +45,7 @@ class checkImage:
         return self.coef
 
     def getCoef(self, img, classes):
-        self.model = f"runs/classification/{classes}/weights//best.pt"
+        self.model = YOLO(f"runs/classification/{classes}/weights//best.pt")
         self.image = img
         self.cls = classes
         self.coef = 0
