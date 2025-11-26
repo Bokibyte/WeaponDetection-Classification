@@ -10,7 +10,7 @@ import shutil
 
 weapClass = ["automatic_rifle", "bazooka", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
 yoloModel = "models/yolov8n.pt"
-testDataset = ""
+testDataset = "datasets/testing"
 
 def runTrain():
     for classes in weapClass:
@@ -43,4 +43,5 @@ def imageClazzy5():
         shutil.copy(f"test/weapon/_raw/{os.path.basename(img)}", f"test/weapon/{weapClass[best_idx]}")
 
 if __name__ == "__main__":
+    isWeapon()
     imageClazzy5()
