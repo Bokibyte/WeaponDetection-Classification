@@ -43,6 +43,7 @@ def yamlGen(cls):
         yaml.dump(yamlTemplate, f, sort_keys=False)
         
         
+        
 for classes in weapClass:
     createClassFolder(classes)
     copyFile(classes, "train")

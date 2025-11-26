@@ -20,7 +20,7 @@ def trainTs(cls, model):
     )
 
 if __name__ == '__main__':
-    for cls in weapClass:
-        trainTs(cls, "yolov8n.pt")
-        Organizer(f"classification/{cls}")
-        print(f"[DONE] Trained {cls}")
+    cls = "sniper"
+    trainTs(cls, "yolov8n.pt")
+    Organizer(f"classification/{cls}")
+    print(f"[DONE] Trained {cls}")
