@@ -9,7 +9,7 @@ import shutil
 
 
 weapClass = ["automatic_rifle", "bazooka", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
-yoloModel = "models/yolov8n.pt"
+yoloModel = "models/yolov8n-cls.pt"
 testDataset = "datasets/testing"
 
 def runTrain():
@@ -28,20 +28,30 @@ def isWeapon():
     imgFiles = glob.glob(f"{testDataset}/*")
     [chkimg.isWeap(f) for f in imgFiles]
         
-def imageClazzy5():
+def imageClazzy():
     chkimg = checkImage()
-    imgFiles = random.sample(glob.glob("test/weapon/_crops/*"),5)
+    imgFiles = glob.glob("test/weapon/_crops/*")
     
     for img in imgFiles:
         scores = chkimg.runParallel(img, weapClass)
-        
-        imgName = os.path.splitext(os.path.basename(img))[0]
+
+        imgName = os.path.splitext(os.path.basename(img))[0]   
         best_idx = scores.index(max(scores))
-        print(f"[{imgName}] terbaik:", weapClass[best_idx], scores[best_idx])
-        
-        os.makedirs(f"test/weapon/{weapClass[best_idx]}", exist_ok=True)
-        shutil.copy(f"test/weapon/_raw/{os.path.basename(img)}", f"test/weapon/{weapClass[best_idx]}")
+
+        bestClass = weapClass[best_idx]
+        bestScore = scores[best_idx]
+        print(f"[{imgName}] terbaik:", bestClass, bestScore)
+
+        originalName = imgName.split("_crop_")[0] + ".jpg"
+
+        os.makedirs(f"test/weapon/{bestClass}", exist_ok=True)
+
+        shutil.copy(
+            f"test/weapon/_raw/{originalName}",
+            f"test/weapon/{bestClass}"
+        )
+
 
 if __name__ == "__main__":
-    isWeapon()
-    imageClazzy5()
+    runTrain()
+

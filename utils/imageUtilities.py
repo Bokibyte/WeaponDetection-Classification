@@ -45,20 +45,14 @@ class checkImage:
         return self.coef
 
     def getCoef(self, img, classes):
-        self.model = YOLO(f"runs/classification/{classes}/train/weights//best.pt")
-        self.image = img
-        self.cls = classes
-        self.coef = 0
+        model = YOLO(f"runs/classification/{classes}/train/weights/best.pt")
+        result = model(img, verbose=False)[0]
 
-        self.checkImg = self.model(self.image, verbose=False)
-        boxes = self.checkImg[0].boxes
-        
-        if boxes is None or len(boxes) == 0:
-            self.coef = 0.0
-        else:
-            self.coef = float(boxes.conf.max().cpu().numpy())
-            
-        return self.coef
+        if result.probs is None:
+            return 0.0
+    
+        # ambil probabilitas kelas 0 (karena model single-class)
+        return float(result.probs.data[0].cpu().numpy())
     
     def _wrapper(self, params):
         img, cls = params
