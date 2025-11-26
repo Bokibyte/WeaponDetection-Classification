@@ -3,78 +3,92 @@ import shutil
 import glob
 import yaml
 
+class preprocess():
+    def __init__(self, inputPath, outputPath, classes):
+        
+        self.classes = classes
+        self.name = inputPath
+        self.inputPath = f"datasets/{inputPath}"
+        self.outputPath = f"datasets/{outputPath}"
+        self.folder = ["train", "val"]
+        
+        self.prefix = None
+        self.yamlPath = None
+        self.yamlName = None
+        self.yamlExport = None
+        
+        if not self.classes:
+            self.prefix = "*"
+        else:
+            self.prefix = f"{self.classes[:3]}*"
+    
+    def createFolder(self):
+        os.makedirs(f"{self.outputPath}", exist_ok=True)
+        [os.makedirs(f"{self.outputPath}/images/{f}", exist_ok=True) for f in self.folder]
+        [os.makedirs(f"{self.outputPath}/labels/{f}", exist_ok=True) for f in self.folder]
+        
+    def copyFile(self):
+        self.getImg = sum([glob.glob(f"{self.inputPath}/{f}/images/{self.prefix}") for f in self.folder], [])
+        self.getTxt = sum([glob.glob(f"{self.inputPath}/{f}/labels/{self.prefix}") for f in self.folder], [])
 
-class preprocessing:
-    def __init__(self):
-        self.mainPath = "datasets/gun_classification"
-        self.rawPath = "datasets/gun_classification/_unstructured"
-        self.weapClass = [
-            "automatic_rifle", "bazooka", "grenade_launcher",
-            "handgun", "knife", "shotgun", "smg", "sniper", "sword"
-        ]
+        label_map = {os.path.splitext(os.path.basename(t))[0]: t for t in self.getTxt}
 
-    def createClassFolder(self, cls):
-        os.makedirs(f"{self.mainPath}/{cls}", exist_ok=True)
-        os.makedirs(f"{self.mainPath}/{cls}/images/train", exist_ok=True)
-        os.makedirs(f"{self.mainPath}/{cls}/images/val", exist_ok=True)
-        os.makedirs(f"{self.mainPath}/{cls}/labels/train", exist_ok=True)
-        os.makedirs(f"{self.mainPath}/{cls}/labels/val", exist_ok=True)
+        for idx, img in enumerate(self.getImg):
+            name = os.path.splitext(os.path.basename(img))[0]
+            if name in label_map:
+                txt = label_map[name]
 
-    def copyFile(self, cls, type):
-        prefix = f"{cls[:3]}*"
-        getImg = glob.glob(os.path.join(self.rawPath, type, "images", prefix))
-        getTxt = glob.glob(os.path.join(self.rawPath, type, "labels", prefix))
+                if self.prefix == "*":
+                    [shutil.copy(img, f"{self.outputPath}/images/{f}") for f in self.folder]
+                    [shutil.copy(txt, f"{self.outputPath}/labels/{f}") for f in self.folder]
 
-        for idx, images in enumerate(getImg):
-            getImgName = os.path.splitext(os.path.basename(images))[0]
-            for labels in getTxt:
-                getTxtName = os.path.splitext(os.path.basename(labels))[0]
-                if getImgName == getTxtName:
-                    newImgName = f"{cls}_{idx}.jpg"
-                    newTxtName = f"{cls}_{idx}.txt"
-                    shutil.copy(images, f"{self.mainPath}/{cls}/images/{type}/{newImgName}")
-                    shutil.copy(labels, f"{self.mainPath}/{cls}/labels/{type}/{newTxtName}")
-                    print(f"[DONE] train img copied : {self.mainPath}/{cls}/images/{type}/{newImgName}")
-                    print(f"[DONE] train txt copied : {self.mainPath}/{cls}/labels/{type}/{newTxtName}")
-                    break
+                else:
+                    newImg = f"{self.classes}_{idx}.jpg"
+                    newTxt = f"{self.classes}_{idx}.txt"
+                    [shutil.copy(img, f"{self.outputPath}/images/{f}/{newImg}") for f in self.folder]
+                    [shutil.copy(txt, f"{self.outputPath}/labels/{f}/{newTxt}") for f in self.folder]
 
+                print(f"[OK] Copied: {name}")
+        
+    
     def yamlGen(self, cls):
+
+        if self.prefix == "*":
+            self.yamlPath = f"{self.inputPath}"
+            self.yamlName = self.name
+            self.yamlExport = f"{self.inputPath}/data.yaml"
+        else:
+            self.yamlPath = f"{self.inputPath}/{self.classes}"
+            self.yamlName = self.classes
+            self.yamlExport = f"{self.inputPath}/{self.classes}/data.yaml"
+    
         yamlTemplate = {
-            "path": f"{self.mainPath}/{cls}",
+            "path": self.yamlPath,
             "train": "images/train",
             "val": "images/val",
-            "names": {0: cls}
+            "names": {0: self.name}
         }
-        with open(f"{self.mainPath}/{cls}/data.yaml", "w") as f:
+        
+        with open(self.yamlExport, "w") as f:
             yaml.dump(yamlTemplate, f, sort_keys=False)
+            
+    def fixLabels(self):
+        txt_files = glob.glob(f"{self.outputPath}/**/*.txt", recursive=True)
 
-    def fixLabels(self, cls):
-        labelsFolder = ["train", "val"]
+        for txt in txt_files:
+            with open(txt, "r") as f:
+                lines = f.readlines()
 
-        for folders in labelsFolder:
-            labelsFiles = glob.glob(f"{self.mainPath}/{cls}/labels/{folders}/*.txt")
+            new_lines = []
+            for line in lines:
+                parts = line.strip().split()
+                if len(parts) >= 5:
+                    parts[0] = "0"          # class id selalu 0
+                    new_lines.append(" ".join(parts) + "\n")
 
-            for file in labelsFiles:
-                new_lines = []
+            with open(txt, "w") as f:
+                f.writelines(new_lines)
 
-                with open(file, "r") as f:
-                    for line in f:
-                        parts = line.strip().split()
+            print(f"[FIXED] {txt}")
 
-                        if len(parts) > 0 and parts[0] != "0":
-                            parts[0] = "0"
-
-                        new_lines.append(" ".join(parts))
-
-                with open(file, "w") as f:
-                    f.write("\n".join(new_lines) + "\n")
-
-                print(f"[UPDATED] Labels with non 0 fixed {file}")
-
-    def processAll(self):
-        for cls in self.weapClass:
-            self.createClassFolder(cls)
-            self.copyFile(cls, "train")
-            self.copyFile(cls, "val")
-            self.fixLabels(cls)
-            self.yamlGen(cls)
+            

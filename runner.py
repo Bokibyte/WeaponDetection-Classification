@@ -1,4 +1,4 @@
-from utils.preprocessing import preprocessing as prep
+from utils.preprocessing import preprocess as prep
 from utils.trainer import YOLOTrainer
 from utils.organizer import Organizer
 
@@ -11,4 +11,9 @@ def runTrain():
         Organizer(classes)
         
 if __name__ == "__main__":
-    runTrain()
+
+    for classes in weapClass:
+        p = prep(f"gun_classification/_unstructured", f"gun_classification/{classes}", classes)
+        p.createFolder()
+        p.copyFile()
+    
