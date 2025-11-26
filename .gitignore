@@ -3,5 +3,9 @@ datasets/**/*.jpeg
 datasets/**/*.png
 datasets/**/*.gif
 datasets/**/*.txt
+test/**/*.jpg
+test/**/*.jpeg
+test/**/*.png
+test/**/*.gif
 crops/**/*.jpg
 **/__pycache__/

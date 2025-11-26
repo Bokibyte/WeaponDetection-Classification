@@ -1,8 +1,8 @@
 from utils.preprocessing import preprocess as prep
 from utils.organizer import Organizer
 from utils.trainer import YOLOTrainer
-from utils.imageClassificator import checkImage
-from concurrent.futures import ThreadPoolExecutor
+from utils.imageUtilities import checkImage
+import os
 import glob
 import random
 
@@ -27,13 +27,17 @@ def isWeapon():
     imgFiles = glob.glob(f"{testDataset}*")
     [chkimg.isWeap(f) for f in imgFiles]
         
-def imageClazzy(img, model, classes):
-    imgCoef = []
-    imgFiles = random.sample(glob.glob("crops/detection/*"),5)
+def imageClazzy5():
     chkimg = checkImage()
-    chkimg.getCoef(img, model, classes)
+    imgFiles = random.sample(glob.glob("test/weapon/crops/*"),5)
     
+    for img in imgFiles:
+        scores = chkimg.runParallel(img, weapClass)
+        
+        imgName = os.path.splitext(os.path.basename(img))[0]
+        best_idx = scores.index(max(scores))
+        print(f"[{imgName}] terbaik:", weapClass[best_idx], scores[best_idx])
 
         
 if __name__ == "__main__":
-    runTrain()
+    imageClazzy5()
