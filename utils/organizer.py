@@ -5,7 +5,6 @@ import shutil
 class Organizer:
     def __init__(self, contextName: str):
 
-
         self.folderPath = "runs/detect/train"
         self.moveFolderPath = f"runs/{contextName}/train"
         self.orgFolder = ["curve", "train", "val", "result"]
@@ -42,6 +41,7 @@ class Organizer:
 
                 pattern = f"{self.folderPath}/{nameFolder}*"
                 self.move_files(pattern, target)
-            
+        
+        shutil.move("runs/detect", self.moveFolderPath)
         shutil.rmtree("runs/detect")
         print("\n[DONE MOVE]")
