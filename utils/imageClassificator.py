@@ -1,16 +1,13 @@
 from ultralytics import YOLO
 import os
 import shutil
-import glob
 
 class checkImage:
     def __init__(self):
         self.detectionModel = "runs/detection/train/weights/best.pt"
         
-    def isWeap(self, img, modelPath, classes):
-        self.model = f"{modelPath}/best.pt"
+    def isWeap(self, img):
         self.image = img
-        self.cls = classes
         self.coef = 0
         self.imgName = os.path.splitext(os.path.basename(self.image))[0]
         self.checkImg = self.detectionModel(self.image, verbose=False)
