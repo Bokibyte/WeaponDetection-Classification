@@ -13,7 +13,7 @@ cache: true
 device: '0'
 workers: 1
 project: null
-name: train2
+name: train
 exist_ok: false
 pretrained: true
 optimizer: auto
@@ -103,4 +103,4 @@ auto_augment: randaugment
 erasing: 0.4
 cfg: null
 tracker: botsort.yaml
-save_dir: B:\Projects\GitHub\Bokibyte\WeaponDetection-Classification\runs\detect\train2
+save_dir: B:\Projects\GitHub\Bokibyte\WeaponDetection-Classification\runs\detect\train

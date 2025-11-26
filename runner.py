@@ -9,6 +9,7 @@ yoloModel = "models/yolov8n.pt"
 def runTrain():
     for classes in weapClass:
         YOLOTrainer(yoloModel).train(f"gun_classification/{classes}")
+        Organizer(f"classification/{classes}").organize()
 
 def runPrep():
     for classes in weapClass:
@@ -17,5 +18,4 @@ def runPrep():
         p.fixLabels()
         
 if __name__ == "__main__":
-    org = Organizer("classification/automatic_rifle")
-    org.organize()
+    runTrain()
