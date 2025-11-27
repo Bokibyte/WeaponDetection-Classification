@@ -11,7 +11,7 @@ class YOLOTrainer:
         model = YOLO(self.model_path)
 
         model.train(
-            data = f"datasets/{dataPath}",  # JUSTRU INI YG BENAR
+            data = f"datasets/{dataPath}", 
             epochs = epochs,
             imgsz = imgsz,
             batch = batch,
