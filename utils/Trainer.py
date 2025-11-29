@@ -19,10 +19,10 @@ class YOLOTrainer:
             workers = workers,
 
             # TRAINING TUNING
-            optimizer = "AdamW",     # jauh lebih stabil utk klasifikasi
-            lr0 = 0.0005,            # learning rate pas
-            dropout = 0.1,           # mencegah overfit
-            patience = 20,           # early stopping
+            optimizer = "AdamW",    
+            lr0 = 0.0005,           
+            dropout = 0.1,          
+            patience = 20,          
         
             # AUGMENTATION 
             hsv_h = 0.01,

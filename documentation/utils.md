@@ -68,6 +68,4 @@ path keluaran hasil ai, biasanya ada di runs/
 
 > `YOLOTrainer(modelPath)`
 
-method "template" untuk train ai supaya settingnya bisa di pakai di model lain. menerima input berupa path dimana model berada (models/)
-
-### -
+method "template" untuk train ai supaya settingnya bisa di pakai di model lain. menerima input berupa path dimana model berada (models/). untuk penjelasan template, silakan beralih ke dokumentasi trainer.
