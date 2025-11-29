@@ -1,8 +1,8 @@
-from utils.newPreprocessing import preprocess as prep
-from utils.newPreprocessing import cropBatch
-from utils.newTrainer import YOLOTrainer
-from utils.newOrganizer import Organizer
-from utils.newImageUtilities import checkImage
+from utils.Preprocessing import preprocess as prep
+from utils.Preprocessing import cropBatch
+from utils.Trainer import YOLOTrainer
+from utils.Organizer import Organizer
+from utils.ImageUtilities import checkImage
 from ultralytics import YOLO
 import os
 import shutil
