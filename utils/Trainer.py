@@ -5,7 +5,7 @@ class YOLOTrainer:
         self.modelPath = modelPath
 
     def train(self, dataPath,
-              epochs=30, imgsz=448, batch=16,
+              epochs=20, imgsz=224, batch=16,
               device=0, workers=2):
         
         model = YOLO(self.modelPath)

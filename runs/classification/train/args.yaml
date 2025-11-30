@@ -1,12 +1,12 @@
 task: classify
 mode: train
 model: models/yolov8s-cls.pt
-data: datasets/gun_classification
-epochs: 30
+data: datasets/gun_classification_cropped
+epochs: 20
 time: null
 patience: 20
 batch: 16
-imgsz: 448
+imgsz: 224
 save: true
 save_period: -1
 cache: false

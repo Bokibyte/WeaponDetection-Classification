@@ -6,12 +6,13 @@ import cv2
 
 class checkImage:
     def __init__(self, cls):
-        self.detectionModel = YOLO("runs/detection/train/weights/best.pt")
-        self.classifyModel  = YOLO("runs/classification/train/weights/best.pt")
+
+        
         self.classes = cls 
 
 
     def isWeap(self, img):
+        self.detectionModel = YOLO("runs/detection/train/weights/best.pt")
         self.image = img
         self.coef = 0
         self.imgName = os.path.splitext(os.path.basename(self.image))[0]
@@ -54,6 +55,7 @@ class checkImage:
 
 
     def getScores(self, img):
+        self.classifyModel  = YOLO("runs/classification/train/weights/best.pt")
         result = self.classifyModel(img, verbose=False)[0]
 
         if result.probs is None:

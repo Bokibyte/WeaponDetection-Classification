@@ -85,7 +85,3 @@ class cropBatch():
                     counter += 1
 
             print("\n[DONE] Auto-crop datasets")
-
-
-
-

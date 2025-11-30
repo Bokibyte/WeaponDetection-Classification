@@ -10,8 +10,6 @@ import glob
 
 weapClass = ["automatic_rifle", "bazooka", "grenade_launcher", "handgun", "knife", "shotgun", "smg", "sniper", "sword"]
 yoloModel = "models/yolov8s-cls.pt"
-yoloDetection = YOLO("runs/detection/train/weights/best.pt")
-yoloClassification = YOLO("runs/classification/train/weights/best.pt")
 
 testDataset = "datasets/testing"
 chkImg = checkImage(weapClass)
@@ -38,14 +36,14 @@ def imageClazzy():
         print (f"[DONE] ({nameImg}) Class: {best}, Score: {score}")
     
 def organize():
-    shutil.rmtree("runs/classification/train")
+    if os.path.exists("runs/classification/train"):
+        shutil.rmtree("runs/classification/train")
     Organizer("classify","classification").organize()
     
 def cropTs():
+    yoloDetection = YOLO("runs/detection/train/weights/best.pt")
     for clazz in weapClass:
         cropBatch("gun_classification", clazz, yoloDetection, padding=30)
 
-
 if __name__ == "__main__":
-    runTrain()
-    organize()
+    # disesuaikan dengan apa yang ingin diproses
