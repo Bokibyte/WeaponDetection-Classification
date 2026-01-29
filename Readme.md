@@ -1,9 +1,5 @@
 # Weapon Detection & Classification w/ Synthetic Data from Filtered and Transformed High-Poly 3D Models w/ PBR Texture from 360 Degree Angle Images.
 
-![mySkor](assets/Capture.PNG)
-
-Kita balas di UAS? semester depan? Kita balas sekarang. kalo mood.
-
 
 
 
